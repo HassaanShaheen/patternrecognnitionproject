@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:prproject/auth/authcontroller.dart';
 import 'package:prproject/auth/login.dart';
 import 'package:prproject/auth/signup.dart';
 import 'package:prproject/screens/setting.dart';
@@ -7,7 +8,7 @@ import 'package:prproject/textcontroller.dart';
 
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key});
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +27,14 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 39, 137, 176),
       ),
-      drawer: Drawer(
+      drawer: Obx(() => Drawer(
         child: Column(
           children: [
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
-                children: const <Widget>[
-                  DrawerHeader(
+                children: <Widget>[
+                  const DrawerHeader(
                     decoration: BoxDecoration(
                       color: Color.fromARGB(255, 39, 137, 176),
                     ),
@@ -48,27 +49,26 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              //
-              child: Column(
-                children: [
-                  Card(
-                    color: const Color.fromARGB(255, 39, 137, 176),
-                    child: ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text(
-                        'Settings',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+            Column(
+              children: [
+                Card( // Moved the settings card here
+                  color: const Color.fromARGB(255, 39, 137, 176),
+                  child: ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text(
+                      'Settings',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                      onTap: () {
-                        Get.to(() => SettingScreen());
-                      },
-                      splashColor: Colors.grey.withOpacity(0.5),
                     ),
+                    onTap: () {
+                      Get.to(() => const SettingScreen());
+                    },
+                    splashColor: Colors.grey.withOpacity(0.5),
                   ),
+                ),
+                if (!authController.isAuthenticated.value)
                   Card(
                     color: const Color.fromARGB(255, 39, 137, 176),
                     child: ListTile(
@@ -87,6 +87,7 @@ class HomeScreen extends StatelessWidget {
                           .withOpacity(1),
                     ),
                   ),
+                if (!authController.isAuthenticated.value)
                   Card(
                     color: const Color.fromARGB(255, 39, 137, 176),
                     child: ListTile(
@@ -104,12 +105,32 @@ class HomeScreen extends StatelessWidget {
                       splashColor: Colors.grey.withOpacity(0.5),
                     ),
                   ),
-                ],
-              ),
+                if (authController.isAuthenticated.value)
+                  Card(
+                    color: const Color.fromARGB(255, 39, 137, 176),
+                    child: ListTile(
+                      leading: const Icon(Icons.logout),
+                      title: const Text(
+                        'Logout',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onTap: () {
+                        // Implement logout functionality
+                        authController.setUserAuthenticated(false);
+                      },
+                      splashColor: Colors.grey.withOpacity(0.5),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),
-      ),
+      )),
+
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -134,7 +155,7 @@ class HomeScreen extends StatelessWidget {
                       labelText: 'Prompt',
                       border: InputBorder.none,
                       suffixIcon: Material(
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                         color: const Color.fromARGB(255, 39, 137, 176),
                         child: InkWell(
                           onTap: () {

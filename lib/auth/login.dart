@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:prproject/auth/authcontroller.dart';
 import 'package:prproject/auth/signup.dart';
-import 'package:prproject/screens/dashborad.dart';
+import 'package:prproject/screens/home-screen.dart';
 import 'package:prproject/utils.dart';
 import 'package:prproject/widgets/button.dart';
 
@@ -21,16 +22,20 @@ class _LogInScreenState extends State<LogInScreen> {
     setState(() {
       loading = true;
     });
-    _auth
-        .createUserWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text).then((value){
-              Utils().toastMessage(value.user!.email.toString());
-              Get.to(() => Dashboard());
+    // After successful login
+    _auth.signInWithEmailAndPassword(
+      email: emailController.text.toString(),
+      password: passwordController.text.toString(),
+    ).then((value) {
+      // Set user as authenticated
+      Get.find<AuthController>().setUserAuthenticated(true);
+      // Navigate to HomeScreen
+      Get.to(() => HomeScreen());
       setState(() {
         loading = false;
       });
-
-    }).onError((error, stackTrace) {
+    })
+        .onError((error, stackTrace) {
       Utils().toastMessage(error.toString());
       setState(() {
         loading = false;

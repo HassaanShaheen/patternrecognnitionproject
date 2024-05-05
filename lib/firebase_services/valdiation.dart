@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prproject/screens/dashborad.dart';
 import 'package:prproject/screens/home-screen.dart';
 
 
@@ -14,7 +13,7 @@ class Validation{
 
     if(user != null){
       Timer(const Duration(seconds: 3), () {
-        Get.to(() => Dashboard());
+        Get.to(() => HomeScreen());
       });
 
     }else{

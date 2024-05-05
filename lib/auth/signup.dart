@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:prproject/auth/authcontroller.dart';
 import 'package:prproject/auth/login.dart';
-import 'package:prproject/screens/dashborad.dart';
+import 'package:prproject/screens/home-screen.dart';
 import 'package:prproject/utils.dart';
 import 'package:prproject/widgets/button.dart';
 
@@ -42,7 +43,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         email: emailController.text.toString(),
         password: passwordController.text.toString()
     ).then((value) {
-      Get.to(() => Dashboard());
+      // Set user as authenticated
+      Get.find<AuthController>().setUserAuthenticated(true);
+      // Navigate to HomeScreen
+      Get.to(() => HomeScreen());
       setState(() {
         loading = false;
       });
