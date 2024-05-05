@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prproject/login.dart';
-import 'package:prproject/setting.dart';
-import 'package:prproject/signup.dart';
+import 'package:prproject/auth/login.dart';
+import 'package:prproject/auth/signup.dart';
+import 'package:prproject/screens/setting.dart';
 import 'package:prproject/textcontroller.dart';
 
-void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({Key? key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const GetMaterialApp(
-      home: HomeScreen(),
-    );
-  }
-}
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key});
@@ -59,61 +45,64 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
                 ],
               ),
             ),
             Container(
-              color: const Color.fromARGB(255, 39, 137, 176),
+              //
               child: Column(
                 children: [
-                  ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text(
-                      'Settings',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  Card(
+                    color: const Color.fromARGB(255, 39, 137, 176),
+                    child: ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: const Text(
+                        'Settings',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
+                      onTap: () {
+                        Get.to(() => SettingScreen());
+                      },
+                      splashColor: Colors.grey.withOpacity(0.5),
                     ),
-                    onTap: () {
-                      Get.to(
-                        () =>SettingScreen()
-                      );
-                    },
-                     splashColor: Colors.grey.withOpacity(0.5),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.person_add),
-                    title: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  Card(
+                    color: const Color.fromARGB(255, 39, 137, 176),
+                    child: ListTile(
+                      leading: const Icon(Icons.person_add),
+                      title: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
+                      onTap: () {
+                        Get.to(() => const SignUpScreen());
+                      },
+                      splashColor: const Color.fromARGB(255, 148, 140, 140)
+                          .withOpacity(1),
                     ),
-                    onTap: () {
-                      Get.to(
-                     () => const SignUpScreen()   
-                      );
-                    },
-                     splashColor: const Color.fromARGB(255, 148, 140, 140).withOpacity(1),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.login),
-                    title: const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  Card(
+                    color: const Color.fromARGB(255, 39, 137, 176),
+                    child: ListTile(
+                      leading: const Icon(Icons.login),
+                      title: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
+                      onTap: () {
+                        Get.to(() => const LogInScreen());
+                      },
+                      splashColor: Colors.grey.withOpacity(0.5),
                     ),
-                    onTap: () {
-                     Get.to(
-                      () => const LogInScreen()
-                     );
-                    },
-                     splashColor: Colors.grey.withOpacity(0.5),
                   ),
                 ],
               ),
@@ -145,6 +134,7 @@ class HomeScreen extends StatelessWidget {
                       labelText: 'Prompt',
                       border: InputBorder.none,
                       suffixIcon: Material(
+                        shape: CircleBorder(),
                         color: const Color.fromARGB(255, 39, 137, 176),
                         child: InkWell(
                           onTap: () {

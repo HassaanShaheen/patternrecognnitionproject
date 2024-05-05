@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prproject/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:prproject/auth/login.dart';
+import 'package:prproject/screens/dashborad.dart';
+import 'package:prproject/utils.dart';
+import 'package:prproject/widgets/button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -10,12 +14,58 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool loading = false;
   bool _isPasswordVisible = false;
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  void signup(){
+    setState(() {
+      loading = true;
+    });
+
+    _auth.createUserWithEmailAndPassword(
+        email: emailController.text.toString(),
+        password: passwordController.text.toString()
+    ).then((value) {
+      Get.to(() => Dashboard());
+      setState(() {
+        loading = false;
+      });
+    }).onError((error, stackTrace){
+      Utils().toastMessage(error.toString());
+      setState(() {
+        loading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            )),
         title: const Text(
           'Signup',
           style: TextStyle(
@@ -34,34 +84,68 @@ class _SignUpScreenState extends State<SignUpScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: "Enter your Email",
-                  labelText: "Email",
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
-                ),
-              ),
+              Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Enter Email';
+                          }
+                          return null;
+                        },
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          hintText: "Enter your Email",
+                          labelText: "Email",
+                          prefixIcon: Icon(Icons.email),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Enter Password';
+                          }
+                          return null;
+                        },
+                        controller: passwordController,
+                        obscureText: !_isPasswordVisible,
+                        decoration: InputDecoration(
+                          hintText: "Enter your Password",
+                          labelText: "Password",
+                          prefixIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  )),
               const SizedBox(height: 20),
-              TextFormField(
-                obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  hintText: "Enter your Password",
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.password),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                  border: const OutlineInputBorder(),
-                ),
-              ),
+              CustomButton(
+                  title: 'Sign Up',
+                  loading: loading,
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+
+                      signup();
+
+                    }
+                  }),
               const SizedBox(height: 20),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -118,10 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Have an account",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
+                    "Already Have an account",
                   ),
                   TextButton(
                     onPressed: () {
@@ -130,7 +211,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: const Text(
                       "Login",
                       style: TextStyle(
-                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -159,7 +239,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey, // Adjust the border color as needed
             width: 1.2, // Adjust the border width as needed
           ),
-          borderRadius: BorderRadius.circular(8.0), // Adjust the border radius as needed
+          borderRadius:
+              BorderRadius.circular(8.0), // Adjust the border radius as needed
         ),
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -170,7 +251,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: 40,
               child: logo,
             ),
-            const SizedBox(width: 8), 
+            const SizedBox(width: 8),
             Text(
               label,
               style: const TextStyle(

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:prproject/signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:prproject/auth/signup.dart';
+import 'package:prproject/screens/dashborad.dart';
+import 'package:prproject/utils.dart';
+import 'package:prproject/widgets/button.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({Key? key}) : super(key: key);
@@ -11,12 +15,55 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  final _auth = FirebaseAuth.instance;
+
+  void login() {
+    setState(() {
+      loading = true;
+    });
+    _auth
+        .createUserWithEmailAndPassword(
+            email: emailController.text, password: passwordController.text).then((value){
+              Utils().toastMessage(value.user!.email.toString());
+              Get.to(() => Dashboard());
+      setState(() {
+        loading = false;
+      });
+
+    }).onError((error, stackTrace) {
+      Utils().toastMessage(error.toString());
+      setState(() {
+        loading = false;
+      });
+    });
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool loading = false;
   bool _isPasswordVisible = false;
 
   @override
-   Widget build(BuildContext context) {
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            )),
         title: const Text(
           'Login',
           style: TextStyle(
@@ -35,34 +82,66 @@ class _LogInScreenState extends State<LogInScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: "Enter your Email",
-                  labelText: "Email",
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
-                ),
-              ),
+              Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Enter Email';
+                          }
+                          return null;
+                        },
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          hintText: "Enter your Email",
+                          labelText: "Email",
+                          prefixIcon: Icon(Icons.email),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Enter Password';
+                          }
+                          return null;
+                        },
+                        controller: passwordController,
+                        obscureText: !_isPasswordVisible,
+                        decoration: InputDecoration(
+                          hintText: "Enter your Password",
+                          labelText: "Password",
+                          prefixIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  )),
               const SizedBox(height: 20),
-              TextFormField(
-                obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  hintText: "Enter your Password",
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.password),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                  border: const OutlineInputBorder(),
-                ),
-              ),
+              CustomButton(
+                  title: 'Sign in',
+                  loading: loading,
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      login();
+                    }
+                  }),
               const SizedBox(height: 20),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -71,7 +150,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: _buildAuthButton(
                       icon: Icons.login,
-                      label: 'Sign up with Google',
+                      label: 'Sign in with Google',
                       onPressed: () {
                         // Implement sign up with Google functionality
                       },
@@ -86,7 +165,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: _buildAuthButton(
                       icon: Icons.login,
-                      label: 'Sign up with Apple',
+                      label: 'Sign in with Apple',
                       onPressed: () {
                         // Implement sign up with Apple ID functionality
                       },
@@ -101,7 +180,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: _buildAuthButton(
                       icon: Icons.login,
-                      label: 'Sign up with GitHub',
+                      label: 'Sign in with GitHub',
                       onPressed: () {
                         // Implement sign up with GitHub functionality
                       },
@@ -119,19 +198,15 @@ class _LogInScreenState extends State<LogInScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Don't have an account",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
+                    "Don't have an account?",
                   ),
                   TextButton(
                     onPressed: () {
                       Get.to(() => const SignUpScreen());
                     },
                     child: const Text(
-                      "Sign Up",
+                      "SignUp",
                       style: TextStyle(
-                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -160,7 +235,8 @@ class _LogInScreenState extends State<LogInScreen> {
             color: Colors.grey, // Adjust the border color as needed
             width: 1.2, // Adjust the border width as needed
           ),
-          borderRadius: BorderRadius.circular(8.0), // Adjust the border radius as needed
+          borderRadius:
+              BorderRadius.circular(8.0), // Adjust the border radius as needed
         ),
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -171,7 +247,7 @@ class _LogInScreenState extends State<LogInScreen> {
               height: 40,
               child: logo,
             ),
-            const SizedBox(width: 8), 
+            const SizedBox(width: 8),
             Text(
               label,
               style: const TextStyle(

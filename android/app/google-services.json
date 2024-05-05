@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "359407889256",
+    "project_id": "texttoimage-f5e80",
+    "storage_bucket": "texttoimage-f5e80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359407889256:android:6b4ff2d7e00b7cb993c4dd",
+        "android_client_info": {
+          "package_name": "com.texttoimage.text_to_image"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVJ3FDna2U23m0zSzccp7OeSZ0G7qD2_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
