@@ -6,7 +6,6 @@ import 'package:prproject/auth/signup.dart';
 import 'package:prproject/screens/setting.dart';
 import 'package:prproject/textcontroller.dart';
 
-
 class HomeScreen extends StatelessWidget {
   final AuthController authController = Get.put(AuthController());
 
@@ -30,107 +29,138 @@ class HomeScreen extends StatelessWidget {
       drawer: Obx(() => Drawer(
         child: Column(
           children: [
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 39, 137, 176),
-                    ),
-                    child: Text(
-                      'Sidebar Header',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 246, 246, 247),
-                        fontSize: 24,
-                      ),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 39, 137, 176),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Font Frame',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  if (authController.isAuthenticated.value)
+                    FutureBuilder(
+                      future: authController.getUserEmail(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          final userEmail = snapshot.data;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Text(
+                                'Welcome,',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                userEmail ?? 'Guest',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
                 ],
               ),
             ),
-            Column(
-              children: [
-                Card( // Moved the settings card here
-                  color: const Color.fromARGB(255, 39, 137, 176),
-                  child: ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text(
-                      'Settings',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onTap: () {
-                      Get.to(() => const SettingScreen());
-                    },
-                    splashColor: Colors.grey.withOpacity(0.5),
+            Spacer(), // Add spacer to push buttons to the bottom
+            Card(
+              color: const Color.fromARGB(255, 39, 137, 176),
+              child: ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text(
+                  'Settings',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-                if (!authController.isAuthenticated.value)
-                  Card(
-                    color: const Color.fromARGB(255, 39, 137, 176),
-                    child: ListTile(
-                      leading: const Icon(Icons.person_add),
-                      title: const Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        Get.to(() => const SignUpScreen());
-                      },
-                      splashColor: const Color.fromARGB(255, 148, 140, 140)
-                          .withOpacity(1),
-                    ),
-                  ),
-                if (!authController.isAuthenticated.value)
-                  Card(
-                    color: const Color.fromARGB(255, 39, 137, 176),
-                    child: ListTile(
-                      leading: const Icon(Icons.login),
-                      title: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        Get.to(() => const LogInScreen());
-                      },
-                      splashColor: Colors.grey.withOpacity(0.5),
-                    ),
-                  ),
-                if (authController.isAuthenticated.value)
-                  Card(
-                    color: const Color.fromARGB(255, 39, 137, 176),
-                    child: ListTile(
-                      leading: const Icon(Icons.logout),
-                      title: const Text(
-                        'Logout',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        // Implement logout functionality
-                        authController.setUserAuthenticated(false);
-                      },
-                      splashColor: Colors.grey.withOpacity(0.5),
-                    ),
-                  ),
-              ],
+                onTap: () {
+                  Get.to(() => const SettingScreen());
+                },
+                splashColor: Colors.grey.withOpacity(0.5),
+              ),
             ),
+            if (!authController.isAuthenticated.value)
+              Card(
+                color: const Color.fromARGB(255, 39, 137, 176),
+                child: ListTile(
+                  leading: const Icon(Icons.person_add),
+                  title: const Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    Get.to(() => const SignUpScreen());
+                  },
+                  splashColor: const Color.fromARGB(255, 148, 140, 140)
+                      .withOpacity(1),
+                ),
+              ),
+            if (!authController.isAuthenticated.value)
+              Card(
+                color: const Color.fromARGB(255, 39, 137, 176),
+                child: ListTile(
+                  leading: const Icon(Icons.login),
+                  title: const Text(
+                    'Login',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    Get.to(() => const LogInScreen());
+                  },
+                  splashColor: Colors.grey.withOpacity(0.5),
+                ),
+              ),
+            if (authController.isAuthenticated.value)
+              Card(
+                color: const Color.fromARGB(255, 39, 137, 176),
+                child: ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    // Implement logout functionality
+                    authController.setUserAuthenticated(false);
+                  },
+                  splashColor: Colors.grey.withOpacity(0.5),
+                ),
+              ),
+            // Footer buttons
           ],
         ),
       )),
-
-
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,

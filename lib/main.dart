@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prproject/screens/splash_screen.dart';git
+import 'package:prproject/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-
 import 'firebase_services/firebase_options.dart';
 
 

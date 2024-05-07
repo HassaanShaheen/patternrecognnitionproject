@@ -18,6 +18,9 @@ class LogInScreen extends StatefulWidget {
 class _LogInScreenState extends State<LogInScreen> {
   final _auth = FirebaseAuth.instance;
 
+
+
+
   void login() {
     setState(() {
       loading = true;
@@ -43,9 +46,13 @@ class _LogInScreenState extends State<LogInScreen> {
     });
   }
 
+
+
+
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   bool loading = false;
   bool _isPasswordVisible = false;
 
@@ -156,8 +163,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     child: _buildAuthButton(
                       icon: Icons.login,
                       label: 'Sign in with Google',
-                      onPressed: () {
-                        // Implement sign up with Google functionality
+                      onPressed: () async{
                       },
                       logo: Image.asset(
                         'assets/images/google.png',

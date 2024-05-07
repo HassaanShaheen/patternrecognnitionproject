@@ -18,9 +18,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
+
+
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
 
   bool loading = false;
   bool _isPasswordVisible = false;
@@ -57,6 +60,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
     });
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -159,8 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: _buildAuthButton(
                       icon: Icons.login,
                       label: 'Sign up with Google',
-                      onPressed: () {
-                        // Implement sign up with Google functionality
+                      onPressed: () async{
                       },
                       logo: Image.asset(
                         'assets/images/google.png',
