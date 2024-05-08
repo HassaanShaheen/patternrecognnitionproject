@@ -68,6 +68,8 @@ class HomeScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+
+                              //this is my trail commit to check my origin master
                               Text(
                                 userEmail ?? 'Guest',
                                 style: const TextStyle(
