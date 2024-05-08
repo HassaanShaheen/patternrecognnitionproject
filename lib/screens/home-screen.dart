@@ -70,6 +70,7 @@ class HomeScreen extends StatelessWidget {
                               ),
 
                               //this is my trail commit to check my origin master
+                              //hello 123 trail commit
                               Text(
                                 userEmail ?? 'Guest',
                                 style: const TextStyle(
